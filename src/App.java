@@ -25,7 +25,7 @@ public class App {
                         demandeRvService.addRvByPatient(p, DemandeRvVue.saisieRv());
                     }
                     else{
-                        System.out.println("patient n'existe pas");
+                        System.out.println("patient n'existe pas!");
                     }
                 }
                 case 4 ->{
