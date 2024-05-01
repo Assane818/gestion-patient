@@ -2,30 +2,26 @@ package services;
 
 import entities.Patient;
 
-public class PatientService {
-    private final int N = 10;
-    private int n;
-    Patient[] patients = new Patient[N];
+public class PatientService extends Service<Patient> {
 
-    public void addPatient(Patient p){
-        if(n < N){
-            patients[n++] = p;
+    public PatientService () {
+        tab = new Patient[N];
+    }
+    @Override
+    public boolean add(Patient p){
+        if(nbr < N){
+            int id = generateId();
+            p.setId(id);
+            p.setNumero(generateNumero(id, "PAT"));
+            tab[nbr++] = p;
+            return true;
         }
         else{
-            System.out.println("le tableau est plein");
+            return false;
         }
     }
 
-    public Patient[] listerPatient(){
-        return patients;
-    }
-
-    public Patient getClientByNumero(String num) {
-        for (int i = 0; i < patients.length; i++) {
-            if(patients[i] != null && patients[i].getNumero().equals(num)) {
-                 return patients[i];
-            }
-        }
-        return null;
+    public int generateId() {
+        return Patient.getNbrePatient();
     }
 }

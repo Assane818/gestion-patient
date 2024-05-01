@@ -1,77 +1,64 @@
 package services;
 
 import entities.DemandeRv;
-import entities.Patient;
 import enums.Etat;
 import enums.Specialite;
 
-public class DemandeRvService {
-    private final int N = 50;
-    private DemandeRv[] allDemandes = new DemandeRv[N];
-    private int z;
-
-    public void addRvByPatient(Patient p, DemandeRv r){
-        int n;
-        n = p.getN();
-        if (n < p.getNbreRv()) {
-            p.getDemandes()[n++] = r;
-            r.setPatient(p);
-        }
+public class DemandeRvService extends Service<DemandeRv>{
+    public DemandeRvService() {
+        tab = new DemandeRv[N];
     }
 
-    public DemandeRv[] listerAllByEtat(Patient[] patients, Etat etat){
-        for (int i = 0; i < patients.length; i++) {
-            if(patients[i] != null) {
-                for (int j = 0; j < patients[i].getDemandes().length; j++) {
-                    if (z < N && patients[i].getDemandes()[j] != null && patients[i].getDemandes()[j].getEtat().equals(etat)){
-                        allDemandes[z++] = patients[i].getDemandes()[j];
-                    }
-                }
+    public int generateId() {
+        return DemandeRv.getNbreDemande();
+    }
+
+    public DemandeRv[] lister(Etat etat){
+        DemandeRv[] rvEtat = new DemandeRv[N];
+        int nbrEtat = 0;
+        for (DemandeRv demandeRv : tab) {
+            if(demandeRv != null && demandeRv.getEtat() == etat) {
+                rvEtat[nbrEtat++] = demandeRv;
             }
         }
-        return allDemandes;
+        return rvEtat;
     }
 
-    public DemandeRv[] listerAllBySpecialite(Patient[] patients, Specialite sp){
-        for (int i = 0; i < patients.length; i++) {
-            if(patients[i] != null) {
-                for (int j = 0; j < patients[i].getDemandes().length; j++) {
-                    if (z < N && patients[i].getDemandes()[j] != null && patients[i].getDemandes()[j].getSpecialite().equals(sp)){
-                        allDemandes[z++] = patients[i].getDemandes()[j];
-                    }
-                }
+    public DemandeRv[] lister(Specialite specialite){
+        DemandeRv[] rvSpe = new DemandeRv[N];
+        int nbrSpe = 0;
+        for (DemandeRv demandeRv : tab) {
+            if(demandeRv != null && demandeRv.getSpecialite() == specialite) {
+                rvSpe[nbrSpe++] = demandeRv;
             }
         }
-        return allDemandes;
+        return rvSpe;
     }
 
-    public DemandeRv[] listerAllDemande(Patient[] patients){
-        for (int i = 0; i < patients.length; i++) {
-            if(patients[i] != null) {
-                for (int j = 0; j < patients[i].getDemandes().length; j++) {
-                    if (z < N && patients[i].getDemandes()[j] != null){
-                        allDemandes[z++] = patients[i].getDemandes()[j];
-                    }
-                }
-            }
+    @Override
+    public boolean add(DemandeRv rv) {
+        if(nbr < N) {
+            int id = generateId();
+            rv.setId(id);
+            rv.setNumero(generateNumero(id, "RV"));
+            rv.setEtat(Etat.encours);
+            tab[nbr++] = rv;
+            return true;
         }
-        return allDemandes;
+        return false;
     }
 
-    public DemandeRv getDemandeRvById(Patient[] patients,int id) {
-        for (int i = 0; i < patients.length; i++) {
-            if(patients[i] != null) {
-                for (int j = 0; j < patients[i].getDemandes().length; j++) {
-                    if (z < N && patients[i].getDemandes()[j] != null && patients[i].getDemandes()[j].getId() == id){
-                        return patients[i].getDemandes()[j];
-                    }
-                }
-            }
+    public boolean traiterRv(DemandeRv rv, Etat etat){
+        boolean result = false;
+        switch (rv.getEtat()) {
+            case encours:
+                rv.setEtat(etat);
+                result = true;
+                break;
+        
+            default:
+                break;
         }
-        return null;
-    }
-
-    public void traiterRv(DemandeRv r, Etat etat){
-        r.setEtat(etat);
+        return result;
     }
 }
